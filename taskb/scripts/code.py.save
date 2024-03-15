@@ -1,0 +1,27 @@
+#!/usr/bin/python3
+#(haschebang thing is used instead of mentioning extension. it's bin/bash)
+import rospy
+from sensor_msgs.msg import PointCloud2
+import torch  # Or import torch if using PyTorch
+import pointcloud2 as pcl2
+import sensor_msgs.point_cloud2 as pc2
+#import ros_numpy
+import numpy as np
+
+def pointcloud_callback(data):
+    #pc = ros_numpy.numpify(data) #pc is a tuple of 3 lists: list of x,y,z coordiantes respectively
+    #points=np.zeros((pc.shape[0],3)) #points is a 2D numpy array that has 3 channels for x,y,z and has n number of rows where n is the number of data points pc has
+    #points[:,0]=pc['x'] #1st column of points will all be x coordinates (below for y&z)
+    #points[:,1]=pc['y']
+    #points[:,2]=pc['z']
+    #p = pcl.PointCloud(np.array(points, dtype=np.float32)) 
+    points = list(pcl2.read_points(data, field_names=("x", "y", "z"), skip_nans=True)) 
+    print(type(points[0]['x'])) #points is a list of tuples:(x,y,z)sudo python3 -m pip uninstall tensorflow
+    pt = np.array(points)
+    print(type(pt))
+
+if __name__ == "__main__":
+    rospy.init_node("pointnet_ros_node")
+    # Subscribe to the point cloud topic
+    rospy.Subscriber("lidar_top", PointCloud2, pointcloud_callback)
+    rospy.spin()  # Keep the node running
